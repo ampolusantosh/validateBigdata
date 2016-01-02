@@ -16,7 +16,9 @@ import bigdata.validator.internal.ConstraintParser;
 
 public class ValidatorMapper extends Mapper<LongWritable, Text, NullWritable, Text> {
 	public static enum COUNTERS {
-		LINE_NUMBER
+		LINE_NUMBER,
+		ERRORS,
+		ERROR_RECORDS
 	};
 	String table;
 	String delimiter;
@@ -82,10 +84,13 @@ public class ValidatorMapper extends Mapper<LongWritable, Text, NullWritable, Te
 								),
 						invalid_output_dir_name+"invalid_file");
 				violated=true;
+				context.getCounter(COUNTERS.ERRORS).increment(1);
 			}
 		}
 		if (!violated)
 			mout.write(NullWritable.get(), value, valid_output_dir_name+"valid_file");
+		else
+			context.getCounter(COUNTERS.ERROR_RECORDS).increment(1);
 	}
 	
 	@Override
