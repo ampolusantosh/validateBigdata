@@ -17,25 +17,29 @@ import bigdata.validator.internal.ConstraintParser;
 import bigdata.validator.mapreduce.ValidatorMapper;
 
 public class Driver {
+	
+	public static final String ConfigXmlPath="config\\constraint.xml";	
 	public static final Log LOG = LogFactory.getLog(Driver.class.getName());
 	
 	public void run() throws Exception
 	{
 		ConstraintParser constraintConfig=new ConstraintParser();
-		constraintConfig.parse();
+		constraintConfig.parse(ConfigXmlPath);
 		FileUtils.deleteDirectory(new File(constraintConfig.output_root_dir));
 		List<String> tablesWithConstraints = new ArrayList<String>(constraintConfig.allConstraints.keySet());
 		String inputPath;
 		for (String table: tablesWithConstraints)
 		{
-			// Launch one Map Reduce Job for this table.
+			// Launch one Map Reduce Job for each table.
 			
 			Configuration conf = new Configuration();
 			conf.set("table", table);
+			conf.set("ConfigXmlPath",ConfigXmlPath);
 			
 			Job job=new Job(conf);
 			job.setJobName("MR data validation job for "+table);
-//			job.setJarByClass(Driver.class); 
+			
+//			Input paths should be taken recursively ****
 			
 			inputPath=constraintConfig.source_root_dir+System.getProperty("file.separator")+constraintConfig.allTables.get(table).getSourceDir();
 			FileInputFormat.addInputPath(job, new Path(inputPath));

@@ -20,7 +20,6 @@ import bigdata.validator.constraint.Constraint;
 
 public class ConstraintParser {
 	
-	public static final String ConfigXmlPath="config\\constraint.xml";	
 	HashMap<String, String> type_class=new HashMap<String, String>();	// Store the mapping of constraint type and class name
 	/*
 	Constraints are stored in the following :
@@ -36,7 +35,7 @@ public class ConstraintParser {
 
 	public static final Log LOG = LogFactory.getLog(ConstraintParser.class.getName());
 	
-	public void parse() throws Exception
+	public void parse(String ConfigXmlPath) throws Exception
 	{
 		File config=new File(ConfigXmlPath);
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -185,19 +184,6 @@ public class ConstraintParser {
 					allConstraints.put(table, new ArrayList<Constraint>());
 				allConstraints.get(table).add(cons);
 			}
-			
-			/*try
-			{
-				Class<?> c=Class.forName(type_class.get(type)+"");
-				Constructor<?> oneString=c.getConstructor(String.class);
-				
-				Constraint oneS=(Constraint) oneString.newInstance("abc");
-				Method apply=oneS.getClass().getMethod("apply", String.class);
-				Object returnVal=apply.invoke(oneS, "abc");
-				
-				System.out.println(returnVal.toString());
-			
-			}*/
 			catch(Exception e)	{
 				LOG.error(e.toString());
 			}

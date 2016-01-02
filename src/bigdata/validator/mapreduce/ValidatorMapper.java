@@ -15,9 +15,12 @@ import bigdata.validator.constraint.Constraint;
 import bigdata.validator.internal.ConstraintParser;
 
 public class ValidatorMapper extends Mapper<LongWritable, Text, NullWritable, Text> {
-
+	public static enum COUNTERS {
+		LINE_NUMBER
+	};
 	String table;
 	String delimiter;
+	boolean ignoreHeader;
 	
 	public static final Log LOG = LogFactory.getLog(ValidatorMapper.class.getName());
 	MultipleOutputs<NullWritable, Text> mout;
@@ -30,7 +33,7 @@ public class ValidatorMapper extends Mapper<LongWritable, Text, NullWritable, Te
 		// Parse Constraints object to get validator configurations
 		ConstraintParser constraintConfig=new ConstraintParser();
 		try {
-			constraintConfig.parse();
+			constraintConfig.parse(context.getConfiguration().get("ConfigXmlPath"));
 			LOG.info("Constraints for table "+table + " : " + constraintConfig.allConstraints.get(table).toString());
 			valid_output_dir_name=constraintConfig.valid_data_dir_name+System.getProperty("file.separator")
 //					+constraintConfig.allTables.get(table).getSourceDir()
@@ -43,6 +46,7 @@ public class ValidatorMapper extends Mapper<LongWritable, Text, NullWritable, Te
 		}
 		cons=constraintConfig.allConstraints.get(table);
 		delimiter=constraintConfig.allTables.get(table).getDelimiter();
+		ignoreHeader=constraintConfig.allTables.get(table).isIgnoreHeader();
 		
 		// For all constraints that are of type FK, call cacheParent function
 		for ( Constraint c: cons )
@@ -56,6 +60,10 @@ public class ValidatorMapper extends Mapper<LongWritable, Text, NullWritable, Te
 	@Override
 	public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException
 	{
+		context.getCounter(COUNTERS.LINE_NUMBER).increment(1);
+    	long line_num=context.getCounter(COUNTERS.LINE_NUMBER).getValue();
+    	if (line_num==1 && ignoreHeader)
+    		return;
 		String record[]=value.toString().split(delimiter);
 		boolean violated=false;
 		boolean violatedToInvalid=true;

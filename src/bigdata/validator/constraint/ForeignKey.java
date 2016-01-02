@@ -14,10 +14,11 @@ import bigdata.validator.internal.ConstraintParser;
 
 public class ForeignKey extends Constraint {
 
-	public List<String> parentColumnValues;
+	private List<String> parentColumnValues;
 	private String parentSourceDir;
 	private String parentTableDelimiter;
 	private int parentColumnIndex;
+	private boolean parentTableIgnoreHeader;
 	
 	public static final Log LOG = LogFactory.getLog(ForeignKey.class.getName());
 	
@@ -48,6 +49,7 @@ public class ForeignKey extends Constraint {
 				+constraintConfig.allTables.get(parentTable).getSourceDir();
 		parentColumnIndex=constraintConfig.findColumnIndex(parentTable, parentColumn);
 		parentTableDelimiter=constraintConfig.allTables.get(parentTable).getDelimiter();
+		parentTableIgnoreHeader=constraintConfig.allTables.get(parentTable).isIgnoreHeader();
 		parentColumnValues=new ArrayList<String>();
 		final File source = new File(parentSourceDir);
 		
@@ -67,6 +69,7 @@ public class ForeignKey extends Constraint {
 	        	try {
 	        		BufferedReader br=new BufferedReader(new FileReader(fileEntry));
 	        		String line=br.readLine();
+	        		if(parentTableIgnoreHeader) line=br.readLine(); // Ignoring the fist line
 	        		while(line!=null) {
 		        		parentColumnValues.add(line.split(parentTableDelimiter)[parentColumnIndex]);
 		        		line=br.readLine();
