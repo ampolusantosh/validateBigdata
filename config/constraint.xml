@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<configuration>
+<global>
+<valid_data_dir_name>valid</valid_data_dir_name>
+<invalid_data_dir_name>invalid</invalid_data_dir_name>
+<source_root_dir>D:\Eclipse_workspace\BigData_Validation\input</source_root_dir>
+<output_root_dir>D:\Eclipse_workspace\BigData_Validation\output</output_root_dir>
+<!-- valid/invalid data output directory is taken as output root + valid/invalid directory name
+	 + source from table block for that table -->
+	 
+	 <constraint_package>bigdata.validator.constraint</constraint_package>
+	 <constraint_class type="NULL">Null</constraint_class>
+	 <constraint_class type="IN">In</constraint_class>
+	 <constraint_class type="BETWEEN">Between</constraint_class>
+	 <constraint_class type="LIKE">Like</constraint_class>
+	 <constraint_class type="LIKE_REGEX">LikeRegex</constraint_class>
+	 <constraint_class type="LIKE_IF">LikeIf</constraint_class>
+	 <constraint_class type="FK">ForeignKey</constraint_class>
+	 
+</global>
+
+
+<data_model_table name="customer">
+	<delimiter>\|</delimiter>
+<!-- 	this delimiter is used for parsing data as well the column names -->
+	<columns>id|name|phone|info|country</columns>
+	<ignoreHeader>false</ignoreHeader>
+	<source>CUSTOMER\2016\01\01</source>
+<!-- 	source path is taken as input root + source -->
+</data_model_table>
+
+<data_model_table name="customer_contact">
+	<delimiter>\|</delimiter>
+	<columns>id|office_phone|mobile_phone</columns>
+	<ignoreHeader>false</ignoreHeader>
+	<source>CUSTOMER_CONTACT\2016\01\01</source>
+</data_model_table>
+
+<constraint name="customer_name_not_null">
+<table>customer</table>
+<column>name</column>
+<type>NULL</type>
+<output>invalid_data_dir_name</output> 
+<!-- records that satisfies this check goes to this output directory -->
+</constraint>
+
+<constraint name="customer_name_like">
+<table>customer</table>
+<column>name</column>
+<type>LIKE</type>
+<constraint_detail>a%</constraint_detail>
+<!-- constraint detail = pattern -->
+<output>valid_data_dir_name</output> 
+</constraint>
+
+<constraint name="customer_phone_regex">
+<table>customer</table>
+<column>phone</column>
+<type>LIKE_REGEX</type>
+<constraint_detail>{\d}+</constraint_detail>
+<!-- constraint detail = pattern -->
+<output>valid_data_dir_name</output> 
+</constraint>
+
+<constraint name="customer_phone_between">
+<table>customer</table>
+<column>phone</column>
+<type>BETWEEN</type>
+<constraint_detail>9999999999</constraint_detail>
+<constraint_detail>1000000000</constraint_detail>
+<!-- constraint_detail = max value and min value -->
+<output>valid_data_dir_name</output> 
+</constraint>
+
+<constraint name="customer_name_like_if">
+<table>customer</table>
+<column>phone</column>
+<type>LIKE_IF</type>
+<constraint_detail>9748%</constraint_detail>
+<!-- constraint detail = pattern -->
+<additional_condition>customer_phone_between</additional_condition>
+<additional_condition>customer_phone_regex</additional_condition>
+<output>valid_data_dir_name</output> 
+</constraint>
+
+<constraint name="customer_country_in">
+<table>customer</table>
+<column>country</column>
+<type>IN</type>
+<constraint_detail>\|</constraint_detail>
+<constraint_detail>US|IN|DE|UK|AU</constraint_detail>
+<!-- constraint detail = delimiter and the list -->
+<output>valid_data_dir_name</output>
+</constraint>
+
+
+<constraint name="customer_contact_fk_id">
+<table>customer_contact</table>
+<column>id</column>
+<type>FK</type>
+<constraint_detail>customer.id</constraint_detail>
+<output>valid_data_dir_name</output> 
+<!-- records that satisfies this check goes to this output directory -->
+</constraint>
+
+</configuration>

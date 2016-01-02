@@ -1,0 +1,4 @@
+12||9874884888|bangalorean|INL|VIOLATED Constraint : NULL for column : name
+12||9874884888|bangalorean|INL|VIOLATED Constraint : IN for column : country
+13|anish3|9748777749|bangalorean|AH|VIOLATED Constraint : IN for column : country
+15||9748777749|bangalorean|IN|VIOLATED Constraint : NULL for column : name
