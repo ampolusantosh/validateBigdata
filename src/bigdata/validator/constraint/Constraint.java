@@ -3,6 +3,7 @@ package bigdata.validator.constraint;
 import java.util.List;
 
 import bigdata.validator.internal.ConstraintParser;
+import bigdata.validator.internal.Table;
 
 public abstract class Constraint {
 	public String name;
@@ -42,5 +43,10 @@ public abstract class Constraint {
 		+" | output : "+output
 		+" | Constraint Details : "+constraint_detail.toString()
 		+" | Additional Condtn. : "+additional_conditions.toString();
+	}
+
+	public String getGroupByFields(String record, Table table) {
+		// To be over ridden in GroupBy class
+		return null;
 	}
 }
