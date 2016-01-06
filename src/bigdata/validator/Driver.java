@@ -45,7 +45,7 @@ public class Driver {
 			FileInputFormat.addInputPath(job, new Path(inputPath));
 			FileOutputFormat.setOutputPath(job, new Path(constraintConfig.output_root_dir+System.getProperty("file.separator")+constraintConfig.allTables.get(table).getSourceDir()));
 			LOG.info("Added Input Path "+inputPath);
-			LOG.info("Add root Output Path "+constraintConfig.output_root_dir+System.getProperty("file.separator")+constraintConfig.allTables.get(table).getSourceDir());
+			LOG.info("Table Output Path "+constraintConfig.output_root_dir+System.getProperty("file.separator")+constraintConfig.allTables.get(table).getSourceDir());
 			
 			 
 			job.setMapperClass(ValidatorMapper.class);

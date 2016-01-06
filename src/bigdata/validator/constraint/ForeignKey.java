@@ -37,7 +37,7 @@ public class ForeignKey extends Constraint {
 	}
 	
 	// Cache the parent table.
-	public void cacheParent(ConstraintParser constraintConfig)
+	public void setup(ConstraintParser constraintConfig)
 	{
 		String parentTable=constraint_detail.get(0).split("\\.")[0];
 		String parentColumn=constraint_detail.get(0).split("\\.")[1];
@@ -47,7 +47,7 @@ public class ForeignKey extends Constraint {
 		parentSourceDir=constraintConfig.source_root_dir
 				+System.getProperty("file.separator")
 				+constraintConfig.allTables.get(parentTable).getSourceDir();
-		parentColumnIndex=constraintConfig.findColumnIndex(parentTable, parentColumn);
+		parentColumnIndex=constraintConfig.allTables.get(parentTable).getColumnIndex(parentColumn);
 		parentTableDelimiter=constraintConfig.allTables.get(parentTable).getDelimiter();
 		parentTableIgnoreHeader=constraintConfig.allTables.get(parentTable).isIgnoreHeader();
 		parentColumnValues=new ArrayList<String>();

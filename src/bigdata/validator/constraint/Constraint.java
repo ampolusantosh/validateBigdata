@@ -30,7 +30,7 @@ public abstract class Constraint {
 
 	public abstract boolean apply(String columnValue);
 	
-	public void cacheParent(ConstraintParser constraintConfig){}
+	public void setup(ConstraintParser constraintConfig){}
 	
 	public String toString()
 	{

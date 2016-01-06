@@ -16,7 +16,7 @@ import bigdata.validator.internal.ConstraintParser;
 
 public class ValidatorMapper extends Mapper<LongWritable, Text, NullWritable, Text> {
 	public static enum COUNTERS {
-		LINE_NUMBER,
+		PROCESSED_RECORDS,
 		ERRORS,
 		ERROR_RECORDS
 	};
@@ -53,8 +53,7 @@ public class ValidatorMapper extends Mapper<LongWritable, Text, NullWritable, Te
 		// For all constraints that are of type FK, call cacheParent function
 		for ( Constraint c: cons )
 		{
-			if(c.type.equalsIgnoreCase("FK"))
-				c.cacheParent(constraintConfig);
+			c.setup(constraintConfig);
 		}
 		mout=new MultipleOutputs<NullWritable, Text>(context);
 	}
@@ -62,8 +61,8 @@ public class ValidatorMapper extends Mapper<LongWritable, Text, NullWritable, Te
 	@Override
 	public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException
 	{
-		context.getCounter(COUNTERS.LINE_NUMBER).increment(1);
-    	long line_num=context.getCounter(COUNTERS.LINE_NUMBER).getValue();
+		context.getCounter(COUNTERS.PROCESSED_RECORDS).increment(1);
+    	long line_num=context.getCounter(COUNTERS.PROCESSED_RECORDS).getValue();
     	if (line_num==1 && ignoreHeader)
     		return;
 		String record[]=value.toString().split(delimiter);
@@ -72,7 +71,10 @@ public class ValidatorMapper extends Mapper<LongWritable, Text, NullWritable, Te
 		boolean condition=false;
 		for ( Constraint c: cons )
 		{
+			// Apply additional constraints **** LEFT
+
 			condition=c.apply(record[c.column_index]);
+//			LOG.info("Applying "+c.name+" to "+value.toString()+" returns "+condition);
 			if (c.output.equalsIgnoreCase("valid_data_dir_name"))
 				violatedToInvalid=true;
 			else violatedToInvalid=false;

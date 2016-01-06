@@ -144,7 +144,7 @@ public class ConstraintParser {
 					.item(0).getTextContent();
 			output=((Element)nConstraints.item(i)).getElementsByTagName("output")
 					.item(0).getTextContent();
-			column_index=findColumnIndex(table, column);
+			column_index=allTables.get(table).getColumnIndex(column);
 			
 			// Read additional conditions
 			int n=((Element)nConstraints.item(i)).getElementsByTagName("additional_condition")
@@ -195,17 +195,5 @@ public class ConstraintParser {
 		    LOG.info("Constraints for table "+key + " : " + allConstraints.get(key).toString());
 		}
 		
-	}
-	public int findColumnIndex(String table, String columnName)
-	{
-		List<String> cols=allTables.get(table).columns;
-		int i=0;
-		for(String col: cols)
-		{
-			if (col.equalsIgnoreCase(columnName))
-				return i;
-			else i++;
-		}
-		return -1;
 	}
 }

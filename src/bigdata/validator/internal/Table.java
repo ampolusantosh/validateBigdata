@@ -39,4 +39,15 @@ public class Table {
 		return " Name = "+name+" columns = "+columns.toString()
 				+ " ignoreHeader = "+ignoreHeader + " sourceDir = "+sourceDir;
 	}
+	public int getColumnIndex(String columnName)
+	{
+		int i=0;
+		for(String col: columns)
+		{
+			if (col.equalsIgnoreCase(columnName))
+				return i;
+			else i++;
+		}
+		return -1;
+	}
 }
